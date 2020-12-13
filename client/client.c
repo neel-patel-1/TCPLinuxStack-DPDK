@@ -7,6 +7,7 @@
 
 int main()
 {
+	int serverIPAddress = INADDR_ANY;
 	//create a socket
 	int network_socket;
 	network_socket = socket(AF_INET, SOCK_STREAM, 0);	
@@ -16,7 +17,7 @@ int main()
 	struct sockaddr_in server_address;
 	server_address.sin_family = AF_INET;
 	server_address.sin_port = htons(9002);
-	server_address.sin_addr.s_addr = INADDR_ANY;
+	server_address.sin_addr.s_addr = serverIPAddress;
 
 	//value of 0 is success, -1 is a fail
 	int connection = connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_address));
@@ -29,7 +30,7 @@ int main()
 	char server_response[256];	
 	recv(network_socket, &server_response, sizeof(server_response), 0);
 
-	printf("The server sent the data. %s \n", server_response);
+	printf("The server sent the data: %s \n", server_response);
 	
 	//close the socket
 	close(network_socket);
