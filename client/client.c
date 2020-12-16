@@ -7,7 +7,7 @@
 
 int main()
 {
-	int serverIPAddress = INADDR_ANY;
+	char serverIPAddress[15] = "127.000.000.001";
 	//create a socket
 	int network_socket;
 	network_socket = socket(AF_INET, SOCK_STREAM, 0);	
@@ -17,8 +17,7 @@ int main()
 	struct sockaddr_in server_address;
 	server_address.sin_family = AF_INET;
 	server_address.sin_port = htons(9002);
-	server_address.sin_addr.s_addr = serverIPAddress;
-
+	inet_pton(AF_INET, serverIPAddress, &(server_address.sin_addr));
 	//value of 0 is success, -1 is a fail
 	int connection = connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_address));
 
