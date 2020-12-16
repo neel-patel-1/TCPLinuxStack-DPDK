@@ -20,7 +20,7 @@ int main()
 	if(inet_pton(AF_INET, serverIPAddress, &(server_address.sin_addr))<0)
 	{
 		printf("Server address could not be resolved\n");
-		exit(1);
+		return 1;
 	}
 	//value of 0 is success, -1 is a fail
 	int connection = connect(network_socket, (struct sockaddr *) &server_address, sizeof(server_address));
@@ -28,6 +28,7 @@ int main()
 	if(connection == -1)
 	{
 		printf("Connection error\n");
+		return 2;
 	}
 
 	char server_response[256];	
