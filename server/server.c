@@ -21,14 +21,25 @@ int main()
 	server_address.sin_addr.s_addr = INADDR_ANY;
 
 	//bind the socket to out specified IP and port
-	bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address));
+	if (bind(server_socket, (struct sockaddr *) &server_address, sizeof(server_address)) == -1)
+	{
+		printf("Bind failed with errno:%d\n ", errno);
+		return 1;
+	}
 	
 	//listen for connections
-	listen(server_socket, 1);
+	if(listen(server_socket, 1) == -1)
+	{
+		printf("Listen failed with errno:%d\n", errno);
+		return 2;
+	}
 	
 	//initialize client socket we can send data to
 	int client_socket;
-	client_socket = accept(server_socket, NULL, NULL);	
+	if (client_socket = accept(server_socket, NULL, NULL) == -1)
+	{
+		printf("Accept failed with errno:%d\n", errno);
+	}	
 
 	//send our server message
 	send(client_socket, server_message, sizeof(server_message), 0);
@@ -37,3 +48,15 @@ int main()
 	close(server_socket);
 	return 0;
 }
+/*
+int yes=1;
+2 //char yes='1'; // Solaris people use this
+3
+4 // lose the pesky "Address already in use" error message
+SYSTEM CALLS OR BUST 24
+5 if (setsockopt(listener,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof yes) == -1) {
+6 perror("setsockopt");
+7 exit(1);
+8 }
+*/
+//possible fix for server malfunction

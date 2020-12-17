@@ -27,7 +27,7 @@ int main()
 
 	if(connection == -1)
 	{
-		printf("Connection error\n");
+		printf("Connection failed with errno: %d\n", errno);
 		return 2;
 	}
 

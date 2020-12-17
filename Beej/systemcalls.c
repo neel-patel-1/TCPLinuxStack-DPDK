@@ -89,7 +89,7 @@ void printIPAddresses(int argc, char *argv[])
 	}
 	freeaddrinfo(res);
 }
-void bindSocket()
+void bindListenSocket()
 {
 	struct addrinfo hints, *res;
 	memset(&hints, 0, sizeof hints);
@@ -99,8 +99,36 @@ void bindSocket()
 	getaddrinfo(NULL, "3490", &hints, *res);// socket to be bound to port 3490
 	
 	int sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	//create a socket using info from results ptr
 
 	bind(sockfd, res->ai_addr, res->ai_addrlen);
+	//bind the socket to the correct port
+	listen(sockfd, 5);//listen on sockfd (port 3490) for incoming connections
+
+	//accepted connection is assigned a new file descriptor
+	struct sockaddr_storage their_addr;
+	socklen_t addr_size = sizeof their_addr;
+	int newfd = accept(sockfd, (struct sockaddr *)&their_addr, &addr_size);
+
+	char *msg = "You have contacted the server.\n";
+	int len = strlen(msg);
+	int bytes_sent = send(newfd, msg, len, 0);
+
+	close(sockfd);
+}
+void connectSocket()
+{
+	struct addrinfo hints, *res;
+	int sockfd;
+
+	memset(&hints, 0, sizeof hints);
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+
+	getaddrinfo("www.example.com", "3490", &hints, &res);
+
+	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	connect(sockfd, res->ai_addr, res->ai_addrlen); //returns -1 on error
 }
 int main(int argc, char *argv[])
 {
