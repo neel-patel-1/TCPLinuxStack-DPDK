@@ -3,8 +3,10 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netdb.h>
 
 #include <errno.h>
+#include <string.h>
  
 /*
 int main()
@@ -60,15 +62,15 @@ int main()
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flag = AI_PASSIVE;
+	hints.ai_flags = AI_PASSIVE;
 
-	if( status = getaddrinfo(SERVER_IPv6, SERVER_PORT, &hints, &res) != 0)
+	if( (status = getaddrinfo(SERVER_IPv4, SERVER_PORT, &hints, &res)) != 0)
 	{
 		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
 		return 1;
 	}
 
-	if ( sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol) == -1)
+	if ( (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
 	{
 		fprintf(stderr, "socket: %s\n", strerror(errno));
 	}
@@ -76,7 +78,7 @@ int main()
 	printf("Testing...\n");
 	for(int i=0; i<ITERATIONS; i++)
 	{
-		if (connect(sockfd, res->ai_addr, res->ai_addrlen) != 0)
+		if (connect(sockfd, res->ai_addr, res->ai_addrlen) == -1)
 		{
 			fprintf(stderr, "connect: %s\n ", strerror(errno));
 			return 2;

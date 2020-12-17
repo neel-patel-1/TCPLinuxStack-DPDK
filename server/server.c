@@ -3,9 +3,11 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <errno.h>
 
 #include <netinet/in.h>
 
+#define SERVER_PORT 3490
 int main()
 {
 	char server_message[256] = "You have reached the server";
@@ -17,7 +19,7 @@ int main()
 	//define the server address
 	struct sockaddr_in server_address;
 	server_address.sin_family = AF_INET;
-	server_address.sin_port = htons(9002);
+	server_address.sin_port = htons(SERVER_PORT);
 	server_address.sin_addr.s_addr = INADDR_ANY;
 
 	//bind the socket to out specified IP and port
