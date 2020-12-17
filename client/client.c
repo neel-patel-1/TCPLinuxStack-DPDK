@@ -4,7 +4,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-
+#include <errno.h>
+ 
+/*
 int main()
 {
 	char serverIPAddress[15] = "127.000.000.001";
@@ -39,4 +41,57 @@ int main()
 	//close the socket
 	close(network_socket);
 	return 0;
+}*/
+//pass in args from command line for benchmark
+//server should accept incoming connections and send some kind
+//of information back to the client
+//client should measure latency
+#define MSG_LENGTH 27
+#define SERVER_IPv4 "127.0.0.1"
+#define SERVER_IPv6 "::1"
+#define SERVER_PORT "3490"
+#define ITERATIONS 5
+int main()
+{
+	int status, sockfd, numBytes;
+	struct addrinfo hints, *res;
+	char server_response[MSG_LENGTH];
+
+	memset(&hints, 0, sizeof hints);
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flag = AI_PASSIVE;
+
+	if( status = getaddrinfo(SERVER_IPv6, SERVER_PORT, &hints, &res) != 0)
+	{
+		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
+		return 1;
+	}
+
+	if ( sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol) == -1)
+	{
+		fprintf(stderr, "socket: %s\n", strerror(errno));
+	}
+
+	printf("Testing...\n");
+	for(int i=0; i<ITERATIONS; i++)
+	{
+		if (connect(sockfd, res->ai_addr, res->ai_addrlen) != 0)
+		{
+			fprintf(stderr, "connect: %s\n ", strerror(errno));
+			return 2;
+		}
+		numBytes = recv(sockfd, &server_response, sizeof(server_response), 0);
+
+		if( numBytes == -1 )
+		{
+			fprintf(stderr, "recv: %s\n", strerror(errno));
+		}
+		else 
+		{
+			printf("Latency: %s\n", server_response);
+		}
+	}
+
+	close(sockfd);
 }
