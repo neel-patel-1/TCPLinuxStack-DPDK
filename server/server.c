@@ -10,7 +10,7 @@
 #define SERVER_PORT 3490
 int main()
 {
-	char server_message[256] = "You have reached the server";
+	char server_message[27] = "You have reached the server";
 	
 	//initialize server socket
 	int server_socket;
