@@ -10,7 +10,7 @@
 #define SERVER_PORT 3490
 int main()
 {
-	char server_message[27] = "You have reached the server";
+	char server_message[28] = "You have reached the server";
 	
 	//initialize server socket
 	int server_socket;
@@ -38,7 +38,7 @@ int main()
 	
 	//initialize client socket we can send data to
 	int client_socket;
-	if (client_socket = accept(server_socket, NULL, NULL) == -1)
+	if ((client_socket = accept(server_socket, NULL, NULL)) == -1)
 	{
 		printf("Accept failed with errno:%d\n", errno);
 	}	

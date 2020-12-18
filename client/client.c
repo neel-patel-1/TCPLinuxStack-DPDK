@@ -48,7 +48,7 @@ int main()
 //server should accept incoming connections and send some kind
 //of information back to the client
 //client should measure latency
-#define MSG_LENGTH 27
+#define MSG_LENGTH 28
 #define SERVER_IPv4 "127.0.0.1"
 #define SERVER_IPv6 "::1"
 #define SERVER_PORT "3490"
