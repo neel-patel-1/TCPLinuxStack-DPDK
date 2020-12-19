@@ -14,6 +14,8 @@
 #define SERVER_IPv6 "::1"
 #define SERVER_PORT "3490"
 #define ITERATIONS 5
+#define CLOCK_TYPE CLOCK_PROCESS_CPUTIME_ID
+//unsure of which clock type to use
 
 timespec diff(timespec start, timespec end);
 int main()
@@ -26,7 +28,6 @@ int main()
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_flags = AI_PASSIVE;
 
 	if( (status = getaddrinfo(SERVER_IPv4, SERVER_PORT, &hints, &res)) != 0)
 	{
@@ -37,22 +38,24 @@ int main()
 	if ( (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
 	{
 		fprintf(stderr, "socket: %s\n", strerror(errno));
+		return 2;
 	}
 
 	printf("Testing...\n");
 	for(int i=0; i<ITERATIONS; i++)
 	{
-		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &before);
+		clock_gettime(CLOCK_TYPE, &before);
 		if (connect(sockfd, res->ai_addr, res->ai_addrlen) == -1)
 		{
 			fprintf(stderr, "connect: %s\n ", strerror(errno));
-			return 2;
+			return 3;
 		}
 		numBytes = recv(sockfd, &server_response, sizeof(server_response), 0);
-		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &after);
+		clock_gettime(CLOCK_TYPE, &after);
 		if( numBytes == -1 )
 		{
 			fprintf(stderr, "recv: %s\n", strerror(errno));
+			return 4;
 		}
 		else 
 		{
@@ -60,7 +63,7 @@ int main()
 			printf("Latency (server-side): %s , RTT: %d:%ld\n", server_response, difference.tv_sec, difference.tv_nsec);
 		}
 	}
-
+	freeaddrinfo(res);
 	close(sockfd);
 }
 timespec diff(timespec start, timespec end)
@@ -75,5 +78,3 @@ timespec diff(timespec start, timespec end)
     }
     return temp;
 }
-//use CLOCK_PROCESS_CPUTIME_ID
-//
