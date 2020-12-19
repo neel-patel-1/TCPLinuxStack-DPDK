@@ -17,7 +17,7 @@
 #define CLOCK_TYPE CLOCK_PROCESS_CPUTIME_ID
 //unsure of which clock type to use
 
-timespec diff(timespec start, timespec end);
+struct timespec diff(struct timespec start, struct timespec end);
 int main()
 {
 	int status, sockfd, numBytes;
@@ -59,16 +59,16 @@ int main()
 		}
 		else 
 		{
-			difference = difftime(before, after);
-			printf("Latency (server-side): %s , RTT: %d:%ld\n", server_response, difference.tv_sec, difference.tv_nsec);
+			difference = diff(before, after);
+			printf("Latency (server-side): %s , RTT: %ld:%ld\n", server_response, difference.tv_sec, difference.tv_nsec);
 		}
 	}
 	freeaddrinfo(res);
 	close(sockfd);
 }
-timespec diff(timespec start, timespec end)
+struct timespec diff(struct timespec start, struct timespec end)
 {
-    timespec temp;
+    struct timespec temp;
     if ((end.tv_nsec-start.tv_nsec)<0) {
         temp.tv_sec = end.tv_sec-start.tv_sec-1;
         temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
