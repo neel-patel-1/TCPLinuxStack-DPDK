@@ -13,6 +13,8 @@ int main()
 {
 	char server_message[256] = "You have reached the server";
 	struct addrinfo hints, *res;
+	struct sockaddr_storage clientAddress;
+	socklen_t clientAddressLength;
 	int status, server_socket, client_socket;
 
 	hints.ai_family = AF_UNSPEC;
@@ -37,6 +39,7 @@ int main()
 		return 3;
 	}
 
+	
 	if ( listen(server_socket, 1) == -1)
 	{
 		fprintf(stderr, "listen: %s\n", strerror(errno));
@@ -45,7 +48,7 @@ int main()
 	
 	for (int i = 0; i<5; i++)
 	{
-		if ( (client_socket = accept(server_socket, NULL, NULL)) == -1)	
+		if ( (client_socket = accept(server_socket, (struct sockaddr*)&clientAddress, &clientAddressLength)) == -1)	
 		{
 			fprintf(stderr, "recv: %s\n", strerror(errno));
 			return 5;
