@@ -35,15 +35,14 @@ int main()
 		return 1;
 	}
 
-	if ( (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
-	{
-		fprintf(stderr, "socket: %s\n", strerror(errno));
-		return 2;
-	}
-
 	printf("Testing...\n");
 	for(int i=0; i<ITERATIONS; i++)
 	{
+		if ( (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
+		{
+			fprintf(stderr, "socket: %s\n", strerror(errno));
+			return 2;
+		}
 		clock_gettime(CLOCK_TYPE, &before);
 		if (connect(sockfd, res->ai_addr, res->ai_addrlen) == -1)
 		{
