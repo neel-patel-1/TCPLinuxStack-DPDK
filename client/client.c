@@ -22,8 +22,8 @@ int main()
 {
 	int status, sockfd, numBytes;
 	struct addrinfo hints, *res;
-	struct timespec before, after, difference;
-	char server_response[MSG_LENGTH];
+	struct timespec before, after, difference, server_response;
+	//char server_response[MSG_LENGTH];
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
@@ -59,7 +59,7 @@ int main()
 		else 
 		{
 			difference = diff(before, after);
-			printf("Latency (server-side): %s , RTT: %ld:%ld\n", server_response, difference.tv_sec, difference.tv_nsec);
+			printf("Latency (server-side): %ld:%ld , RTT: %ld:%ld\n", server_response.tv_sec, server_response.tv_sec, difference.tv_sec, difference.tv_nsec);
 		}
 	}
 	freeaddrinfo(res);

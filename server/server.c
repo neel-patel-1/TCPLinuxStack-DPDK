@@ -1,17 +1,22 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include <errno.h>
 
 #define SERVER_PORT "3490"
+#define CLOCK_TYPE CLOCK_PROCESS_CPUTIME_ID
+
+struct timespec diff(struct timespec start, struct timespec end);
 int main()
 {
-	char server_message[256] = "You have reached the server";
+	//char server_message[256] = "You have reached the server";
+	struct timespec server_message, before, after;
 	struct addrinfo hints, *res;
 	struct sockaddr_storage clientAddress;
 	socklen_t clientAddressLength;
@@ -48,12 +53,15 @@ int main()
 	
 	for (int i = 0; i<5; i++)
 	{
+		clock_gettime(CLOCK_TYPE, &before);
 		if ( (client_socket = accept(server_socket, (struct sockaddr*)&clientAddress, &clientAddressLength)) == -1)	
 		{
 			fprintf(stderr, "recv: %s\n", strerror(errno));
 			return 5;
 		}
 
+		clock_gettime(CLOCK_TYPE, &after);
+		server_message = diff(before, after);
 		if ( send(client_socket, server_message, sizeof(server_message), 0) == -1)
 		{
 			fprintf(stderr, "send: %s\n", strerror(errno));
@@ -65,4 +73,16 @@ int main()
 	freeaddrinfo(res);
 	close(server_socket);
 	return 0;
+}
+struct timespec diff(struct timespec start, struct timespec end)
+{
+    struct timespec temp;
+    if ((end.tv_nsec-start.tv_nsec)<0) {
+        temp.tv_sec = end.tv_sec-start.tv_sec-1;
+        temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
+    } else {
+        temp.tv_sec = end.tv_sec-start.tv_sec;
+        temp.tv_nsec = end.tv_nsec-start.tv_nsec;
+    }
+    return temp;
 }
