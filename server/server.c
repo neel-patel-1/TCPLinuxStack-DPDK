@@ -22,6 +22,7 @@ int main()
 	socklen_t clientAddressLength;
 	int status, server_socket, client_socket;
 
+	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_flags = AI_PASSIVE;
 	hints.ai_socktype = SOCK_STREAM;
