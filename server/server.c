@@ -62,7 +62,7 @@ int main()
 
 		clock_gettime(CLOCK_TYPE, &after);
 		server_message = diff(before, after);
-		if ( send(client_socket, server_message, sizeof(server_message), 0) == -1)
+		if ( send(client_socket, &server_message, sizeof(server_message), 0) == -1)
 		{
 			fprintf(stderr, "send: %s\n", strerror(errno));
 			return 6;
