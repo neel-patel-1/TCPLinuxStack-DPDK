@@ -10,17 +10,16 @@
 #include <errno.h>
 
 #define SERVER_PORT "3490"
-#define CLOCK_TYPE CLOCK_PROCESS_CPUTIME_ID
+#define CLOCK_TYPE CLOCK_MONOTONIC
 
 struct timespec diff(struct timespec start, struct timespec end);
 int main()
 {
-	//char server_message[256] = "You have reached the server";
 	struct timespec server_message, before, after;
 	struct addrinfo hints, *res;
 	struct sockaddr_storage clientAddress;
 	socklen_t clientAddressLength;
-	int status, server_socket, client_socket;
+	int status, server_socket, client_socket, numMessages;
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
@@ -51,14 +50,24 @@ int main()
 		fprintf(stderr, "listen: %s\n", strerror(errno));
 		return 4;
 	}
-	
-	for (int i = 0; i<5; i++)
+	if ( (client_socket = accept(server_socket, (struct sockaddr*)&clientAddress, &clientAddressLength)) == -1)	
+	{
+		fprintf(stderr, "accept: %s\n", strerror(errno));
+		return 5;
+	}
+	if (recv(client_socket, &numMessages, sizeof(numMessages), 0) < 4)
+	{
+		fprintf(stderr, "accept: %s\n", strerror(errno));
+		return 6;
+	}
+
+	for (int i = 0; i<numMessages; i++)
 	{
 		clock_gettime(CLOCK_TYPE, &before);
 		if ( (client_socket = accept(server_socket, (struct sockaddr*)&clientAddress, &clientAddressLength)) == -1)	
 		{
-			fprintf(stderr, "recv: %s\n", strerror(errno));
-			return 5;
+			fprintf(stderr, "accept: %s\n", strerror(errno));
+			return 7;
 		}
 
 		clock_gettime(CLOCK_TYPE, &after);
@@ -66,7 +75,7 @@ int main()
 		if ( send(client_socket, &server_message, sizeof(server_message), 0) == -1)
 		{
 			fprintf(stderr, "send: %s\n", strerror(errno));
-			return 6;
+			return 8;
 		}
 	}
 	

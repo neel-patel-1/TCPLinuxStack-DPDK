@@ -13,14 +13,14 @@
 #define SERVER_IPv4 "127.0.0.1"
 #define SERVER_IPv6 "::1"
 #define SERVER_PORT "3490"
-#define ITERATIONS 5
-#define CLOCK_TYPE CLOCK_PROCESS_CPUTIME_ID
+#define ITERATIONS 10
+#define CLOCK_TYPE CLOCK_MONOTONIC
 //unsure of which clock type to use
 
 struct timespec diff(struct timespec start, struct timespec end);
 int main()
 {
-	int status, sockfd, numBytes;
+	int status, sockfd, numBytes, numMessages = ITERATIONS;
 	struct addrinfo hints, *res;
 	struct timespec before, after, difference, server_response;
 
@@ -34,26 +34,42 @@ int main()
 		return 1;
 	}
 
+	if ( (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
+	{
+		fprintf(stderr, "socket: %s\n", strerror(errno));
+		return 2;
+	}
+	if (connect(sockfd, res->ai_addr, res->ai_addrlen) == -1)
+	{
+		fprintf(stderr, "connect: %s\n ", strerror(errno));
+		return 3;
+	}
+	if(send(sockfd, &numMessages, sizeof(numMessages), 0) == -1)
+	{
+		fprintf(stderr, "send: %s\n", strerror(errno));
+		return 4;
+	}
+	
 	printf("Testing...\n");
 	for(int i=0; i<ITERATIONS; i++)
 	{
 		if ( (sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
 		{
 			fprintf(stderr, "socket: %s\n", strerror(errno));
-			return 2;
+			return 5;
 		}
 		clock_gettime(CLOCK_TYPE, &before);
 		if (connect(sockfd, res->ai_addr, res->ai_addrlen) == -1)
 		{
 			fprintf(stderr, "connect: %s\n ", strerror(errno));
-			return 3;
+			return 6;
 		}
 		numBytes = recv(sockfd, &server_response, sizeof(server_response), 0);
 		clock_gettime(CLOCK_TYPE, &after);
 		if( numBytes == -1 )
 		{
 			fprintf(stderr, "recv: %s\n", strerror(errno));
-			return 4;
+			return 7;
 		}
 		else 
 		{
