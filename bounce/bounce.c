@@ -10,13 +10,14 @@
 #include <errno.h>
 
 
-
+#define SERVER_PORT "4545"
 int main()
 {
+	char *packet =  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 	struct addrinfo hints, *res;
 	struct sockaddr_storage clientAddress;
 	socklen_t clientAddressLength;
-	int status, server_socket, client_socket, numMessages;
+	int  status, server_socket, client_socket, numMessages;
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
@@ -66,9 +67,7 @@ int main()
 			return 7;
 		}
 
-		clock_gettime(CLOCK_TYPE, &after);
-		server_message = diff(before, after);
-		if ( send(client_socket, &server_message, sizeof(server_message), 0) == -1)
+		if ( send(client_socket, &packet, sizeof(packet), 0) == -1)
 		{
 			fprintf(stderr, "send: %s\n", strerror(errno));
 			return 8;
