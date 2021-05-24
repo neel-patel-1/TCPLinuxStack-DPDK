@@ -43,7 +43,7 @@ int main()
 		fprintf(stderr, "bind: %s\n", strerror(errno));
 		return 3;
 	}
-
+	printf("%s", res->ai_addr);
 	
 	if ( listen(server_socket, 1) == -1)
 	{
