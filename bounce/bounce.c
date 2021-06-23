@@ -3,6 +3,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,26 +12,44 @@
 
 
 #define SERVER_PORT "4545"
-int main()
+int main(int argc, char **argv)
 {
-	char *packet =  "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+	//char *packet;
 	struct addrinfo hints, *res;
-	struct sockaddr_storage clientAddress;
-	socklen_t clientAddressLength;
-	int  status, server_socket, client_socket, numMessages;
+	//struct sockaddr_storage clientAddress;
+	//socklen_t clientAddressLength;
+	int  status /*server_socket, client_socket, numMessages*/;
+
+	if(argc != 3){
+		fprintf(stderr, "Usage: Bounce IP_ADDR PORTNUM\n");
+		exit(1);
+	}
+	host = argv[1];	
+	if(res->ai_family == AF_INET && inet_aton(host, NULL) !=0 )
+	{
+		hints.
+	}
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
-	hints.ai_flags = AI_PASSIVE;
+	//hints.ai_flags = AI_PASSIVE;
 	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = 0;
 
-	if( (status = getaddrinfo(NULL, SERVER_PORT, &hints, &res)) !=0)
+	if( (status = getaddrinfo(host, 
+		SERVER_PORT, &hints, &res)) !=0)
 	{
-		fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(status));
-		return 1;
+		fprintf(stderr, "getaddrinfo: %s\n", 
+				gai_strerror(status));
+		exit(1);
 	}
+	struct addrinfo *it;
+	for(it = res; it!=NULL; it=it->ai_next)
+	printf("entry for %s\n", )	
 
-	if( (server_socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) ==-1 )
+	/*
+	if( (server_socket = socket(res->ai_family, 
+		res->ai_socktype, res->ai_protocol)) ==-1 )
 	{
 		fprintf(stderr, "socket: %s\n", strerror(errno));
 		return 2;
@@ -74,8 +93,8 @@ int main()
 		}
 	}
 	
-
+	*/
 	freeaddrinfo(res);
-	close(server_socket);
+	//close(server_socket);
 	return 0;
 }
