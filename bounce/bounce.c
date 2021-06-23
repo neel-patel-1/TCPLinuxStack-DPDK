@@ -50,13 +50,13 @@ int main(int argc, char **argv)
 		if(it->ai_family == AF_INET)
 		{
 			inet_ntop(it->ai_family, 
-				(void *)&((struct sockaddr_in *)(res->ai_addr))->sin_addr, 
+				&(((struct sockaddr_in *)(res->ai_addr))->sin_addr), 
 				hostAddrView, bufSize);
 		}
 		else if(it->ai_family == AF_INET6)
 		{
 			inet_ntop(it->ai_family, 
-				(void *)&(((struct sockaddr_in6 *)(res->ai_addr))->sin6_addr,
+				&(((struct sockaddr_in6 *)(res->ai_addr))->sin6_addr),
 				hostAddrView, bufSize);
 		}
 		fprintf(stdout, "Host IP: %s\n", hostAddrView);
