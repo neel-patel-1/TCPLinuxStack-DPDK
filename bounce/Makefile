@@ -1,3 +1,5 @@
+.PHONY: all clean
+
 all: RawBounce Bounce
 
 RawBounce: raw_bounce.c
@@ -5,4 +7,4 @@ RawBounce: raw_bounce.c
 Bounce: bounce.c
 	gcc bounce.c -g -o Bounce
 clean:
-	rm *.o
+	rm *.o RawBounce Bounce

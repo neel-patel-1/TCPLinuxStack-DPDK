@@ -11,12 +11,12 @@
 #include <time.h>
 #include <errno.h>
 
-
+#define PORTSTRLEN 5
 //#define SERVER_PORT "4545"
 int main(int argc, char **argv)
 {
-	//char *packet;
 	char *host = NULL, *host_port = "5201";
+	/*At least assign port in case node is left NULL*/
 	
 	struct addrinfo hints, *res;
 	//struct sockaddr_storage clientAddress;
@@ -27,11 +27,11 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Usage: Bounce IP_ADDR PORTNUM\n");
 		exit(1);
 	}
-	host = argv[1];	
+	//host = argv[1];	
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
-	//hints.ai_flags = AI_PASSIVE;
+	hints.ai_flags = AI_PASSIVE;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = 0;
 
@@ -46,20 +46,26 @@ int main(int argc, char **argv)
 	struct addrinfo *it;
 	int bufSize = INET6_ADDRSTRLEN;//at least as long as IPv6
 	char hostAddrView[bufSize];
+	in_port_t hostPortView = 0;
+	printf("Listing all available addreses and Ports... \n");
 	for(it = res; it!=NULL; it=it->ai_next){
 		if(it->ai_family == AF_INET)
 		{
 			inet_ntop(it->ai_family, 
 				&(((struct sockaddr_in *)(res->ai_addr))->sin_addr), 
 				hostAddrView, bufSize);
+			hostPortView = ((struct sockaddr_in *)(res->ai_addr))->sin_port;
+			
 		}
 		else if(it->ai_family == AF_INET6)
 		{
 			inet_ntop(it->ai_family, 
 				&(((struct sockaddr_in6 *)(res->ai_addr))->sin6_addr),
 				hostAddrView, bufSize);
+			hostPortView = ((struct sockaddr_in6 *)(res->ai_addr))->sin6_port;
+			
 		}
-		fprintf(stdout, "Host IP: %s\n", hostAddrView);
+		fprintf(stdout, "Host IP: %s\nPort: %d\n\n", hostAddrView, ntohs(hostPortView));
 	}
 
 	/*
