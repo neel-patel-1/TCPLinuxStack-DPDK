@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 #include <pthread.h>
 #include <stdio.h>
@@ -11,10 +12,11 @@
 #include <errno.h>
 
 
-#define SERVER_PORT "4545"
+//#define SERVER_PORT "4545"
 int main(int argc, char **argv)
 {
 	//char *packet;
+	char *host = NULL;
 	struct addrinfo hints, *res;
 	//struct sockaddr_storage clientAddress;
 	//socklen_t clientAddressLength;
@@ -25,10 +27,6 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	host = argv[1];	
-	if(res->ai_family == AF_INET && inet_aton(host, NULL) !=0 )
-	{
-		hints.
-	}
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
@@ -43,9 +41,23 @@ int main(int argc, char **argv)
 				gai_strerror(status));
 		exit(1);
 	}
+
 	struct addrinfo *it;
-	for(it = res; it!=NULL; it=it->ai_next)
-	printf("entry for %s\n", )	
+	int bufSize = INET6_ADDRSTRLEN;//at least as long as IPv6
+	char hostAddrView[bufSize];
+	for(it = res; it!=NULL; it=it->ai_next){
+		printf("entry for %s\n", 
+		if(it->ai_family == AF_INET)
+		{
+			inet_ntop(it->ai_family, res->ai_addr->
+					hostAddrView, bufSize);
+			hostAddrView = 
+		}
+		else if(it->ai_family == AF_INET6)
+		{
+			inet_ntop(it->ai_family, res->ai_addr->)	
+		}
+	}
 
 	/*
 	if( (server_socket = socket(res->ai_family, 
