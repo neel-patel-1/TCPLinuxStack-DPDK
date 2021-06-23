@@ -16,7 +16,8 @@
 int main(int argc, char **argv)
 {
 	//char *packet;
-	char *host = NULL;
+	char *host = NULL, *host_port = "5201";
+	
 	struct addrinfo hints, *res;
 	//struct sockaddr_storage clientAddress;
 	//socklen_t clientAddressLength;
@@ -35,7 +36,7 @@ int main(int argc, char **argv)
 	hints.ai_protocol = 0;
 
 	if( (status = getaddrinfo(host, 
-		SERVER_PORT, &hints, &res)) !=0)
+		host_port, &hints, &res)) !=0)
 	{
 		fprintf(stderr, "getaddrinfo: %s\n", 
 				gai_strerror(status));
@@ -46,17 +47,19 @@ int main(int argc, char **argv)
 	int bufSize = INET6_ADDRSTRLEN;//at least as long as IPv6
 	char hostAddrView[bufSize];
 	for(it = res; it!=NULL; it=it->ai_next){
-		printf("entry for %s\n", 
 		if(it->ai_family == AF_INET)
 		{
-			inet_ntop(it->ai_family, res->ai_addr->
-					hostAddrView, bufSize);
-			hostAddrView = 
+			inet_ntop(it->ai_family, 
+				(void *)&((struct sockaddr_in *)(res->ai_addr))->sin_addr, 
+				hostAddrView, bufSize);
 		}
 		else if(it->ai_family == AF_INET6)
 		{
-			inet_ntop(it->ai_family, res->ai_addr->)	
+			inet_ntop(it->ai_family, 
+				(void *)&(((struct sockaddr_in6 *)(res->ai_addr))->sin6_addr,
+				hostAddrView, bufSize);
 		}
+		fprintf(stdout, "Host IP: %s\n", hostAddrView);
 	}
 
 	/*
