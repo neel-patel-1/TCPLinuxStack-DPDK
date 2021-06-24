@@ -21,17 +21,22 @@ int main(int argc, char **argv)
 	struct addrinfo hints, *res;
 	//struct sockaddr_storage clientAddress;
 	//socklen_t clientAddressLength;
-	int  status /*server_socket, client_socket, numMessages*/;
+	int  status,server_socket/*, client_socket, numMessages*/;
 
 	if(argc != 3){
 		fprintf(stderr, "Usage: Bounce IP_ADDR PORTNUM\n");
 		exit(1);
 	}
-	//host = argv[1];	
 
+	host = argv[1];	/*host gets passed as arg*/
+	host_port = argv[2];/*host_port gets passed as arg*/
+	if(strcmp(host, "unspec") == 0)
+	{
+		host = NULL;
+		hints.ai_flags = AI_PASSIVE;
+	}
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
-	hints.ai_flags = AI_PASSIVE;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = 0;
 
@@ -68,19 +73,19 @@ int main(int argc, char **argv)
 		fprintf(stdout, "Host IP: %s\nPort: %d\n\n", hostAddrView, ntohs(hostPortView));
 	}
 
-	/*
 	if( (server_socket = socket(res->ai_family, 
 		res->ai_socktype, res->ai_protocol)) ==-1 )
 	{
 		fprintf(stderr, "socket: %s\n", strerror(errno));
-		return 2;
+		exit(1);
 	}
-
+	
 	if ( bind(server_socket, res->ai_addr, res->ai_addrlen) == -1 )
 	{
 		fprintf(stderr, "bind: %s\n", strerror(errno));
-		return 3;
+		exit(1);
 	}
+	/*
 
 	
 	if ( listen(server_socket, 1) == -1)
